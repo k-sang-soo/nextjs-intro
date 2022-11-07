@@ -1,7 +1,20 @@
 import Seo from '../components/Seo';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 export default function Home({ results }) {
+    const router = useRouter();
+    const onClick = (id, title) => {
+        router.push(
+            {
+                pathname: `/movies/${id}`,
+                query: {
+                    title,
+                },
+            },
+            `/movies/${id}`, // url 마스킹 : 보여지고 싶은 url 주소로 변경
+        );
+    };
     // const [movies, setMovies] = useState();
     // useEffect(() => {
     //     (async () => {
@@ -16,14 +29,23 @@ export default function Home({ results }) {
         <div className="container">
             <Seo title="Home" />
             {results?.map((movie) => (
-                <Link href={`/movies/${movie.id}`} key={movie.id}>
-                    <a>
-                        <div className="movie">
-                            <img src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} />
-                            <h4>{movie.original_title}</h4>
-                        </div>
-                    </a>
-                </Link>
+                <div onClick={() => onClick(movie.id, movie.original_title)} className="movie" key={movie.id}>
+                    <img src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} />
+                    <h4>
+                        <Link
+                            href={{
+                                //onClick 있는 걸 Link 에서도 사용 할 수 있음
+                                pathname: `/movies/${movie.id}`,
+                                query: {
+                                    title: movie.original_title,
+                                },
+                            }}
+                            as={`/movies/${movie.id}`}
+                        >
+                            <a>{movie.original_title}</a>
+                        </Link>
+                    </h4>
+                </div>
             ))}
             <style jsx>{`
                 .container {
@@ -60,7 +82,7 @@ export async function getServerSideProps() {
     // 항상 서버사이드 랜더링을 하고 싶을 때 즉, 데이터가 유효할 때 화면이 보여지게 되는게 좋을 때
     // api loading이 길어지면 loading이 없는 대신에 유저가 아무것도 보지 못한 채로 오래기다려야 한다는 단점이 있음
     // api를 서버에서 불러오기 때문에 loading이 생기지 않는다.
-    const { results } = await (await fetch(`http://localhost:3000//api/movies`)).json();
+    const { results } = await (await fetch(`http://localhost:3000/api/movies`)).json();
     return {
         props: {
             results,
