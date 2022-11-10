@@ -5,15 +5,16 @@ import { useRouter } from 'next/router';
 export default function Home({ results }) {
     const router = useRouter();
     const onClick = (id, title) => {
-        router.push(
-            {
-                pathname: `/movies/${id}`,
-                query: {
-                    title,
-                },
-            },
-            `/movies/${id}`, // url 마스킹 : 보여지고 싶은 url 주소로 변경
-        );
+        router.push(`/movies/${title}/${id}`);
+        // router.push(
+        //     {
+        //         pathname: `/movies/${id}`,
+        //         query: {
+        //             title,
+        //         },
+        //     },
+        //     `/movies/${id}`, // url 마스킹 : 보여지고 싶은 url 주소로 변경
+        // );
     };
     // const [movies, setMovies] = useState();
     // useEffect(() => {
@@ -32,16 +33,7 @@ export default function Home({ results }) {
                 <div onClick={() => onClick(movie.id, movie.original_title)} className="movie" key={movie.id}>
                     <img src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} />
                     <h4>
-                        <Link
-                            href={{
-                                //onClick 있는 걸 Link 에서도 사용 할 수 있음
-                                pathname: `/movies/${movie.id}`,
-                                query: {
-                                    title: movie.original_title,
-                                },
-                            }}
-                            as={`/movies/${movie.id}`}
-                        >
+                        <Link href={`/movies/${movie.original_title}/${movie.id}`}>
                             <a>{movie.original_title}</a>
                         </Link>
                     </h4>
